@@ -1,4 +1,7 @@
 // src/components/HeroSection.js
+
+
+"use client";
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
@@ -44,3 +47,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+
