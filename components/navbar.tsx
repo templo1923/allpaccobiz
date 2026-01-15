@@ -15,13 +15,13 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-24">
           
-          {/* --- LOGO OFICIAL (Clic = Ir a Inicio) --- */}
+          {/* --- LOGO OFICIAL (Con Filtro Mágico para volverlo Blanco) --- */}
           <a href="/" className="flex-shrink-0 hover:opacity-90 transition-opacity focus:outline-none">
-             {/* Asegúrate de que tu archivo se llame 'logo-allpacco.png' y esté en la carpeta 'public' */}
              <img 
                src="/logo-allpacco.png" 
                alt="AllPacco Logística" 
-               className="h-16 w-auto object-contain" // Ajusta h-16 si lo quieres más grande o pequeño
+               // AQUÍ ESTÁ EL TRUCO: 'invert brightness-0' vuelve cualquier imagen negra en blanca pura.
+               className="h-16 w-auto object-contain invert brightness-0 filter" 
              />
           </a>
 
