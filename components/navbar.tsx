@@ -15,20 +15,21 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-24">
           
-          {/* --- LOGO COMPUESTO (Cajita + Imagen) --- */}
+          {/* --- LOGO COMPUESTO (Cajita + Tu Imagen Original) --- */}
           <a href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity focus:outline-none group">
              
-             {/* 1. LA CAJITA (Que no querías quitar) */}
+             {/* 1. LA CAJITA (Intacta) */}
              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.3)] group-hover:scale-105 transition-transform">
                 <Package className="w-6 h-6 text-background" />
              </div>
 
-             {/* 2. TU LOGO DE IMAGEN (Con filtro para volverse blanco) */}
+             {/* 2. TU NUEVO LOGO (Sin filtros de color) */}
              <img 
+               // ⚠️ IMPORTANTE: Cambia este nombre por el de tu archivo nuevo (ej: logo-nuevo.png)
                src="/logo-allpacco.png" 
                alt="AllPacco Logística" 
-               // 'invert brightness-0' vuelve el negro a blanco. Ajusta h-12 según necesites.
-               className="h-12 w-auto object-contain invert brightness-0 filter" 
+               // Ya NO tiene 'invert' ni 'brightness-0'. Se verá con sus colores originales.
+               className="h-14 w-auto object-contain" 
              />
           </a>
 
