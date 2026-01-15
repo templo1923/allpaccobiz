@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { FloatingCTA } from "@/components/floating-cta" // <--- 1. IMPORTAR AQUÍ
+import { FloatingCTA } from "@/components/floating-cta" // <--- 1. IMPORTADO CORRECTAMENTE
 
 const inter = Inter({ subsets: ["latin"] })
 const _geist = Geist({ subsets: ["latin"] })
@@ -53,10 +53,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
-      <body className={`${inter.className} font-sans antialiased`}>
+    <html lang="es" className="scroll-smooth">
+      <body className={`${inter.className} font-sans antialiased bg-slate-950 text-slate-50`}>
+        
+        {/* Aquí va el contenido principal de tu web */}
         {children}
+        
+        {/* --- AQUÍ FALTABA AGREGAR EL COMPONENTE --- */}
+        <FloatingCTA />
+        
+        {/* Analytics (Ya que lo importaste, es bueno ponerlo) */}
         <Analytics />
+        
       </body>
     </html>
   )
