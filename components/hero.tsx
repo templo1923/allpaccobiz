@@ -11,7 +11,7 @@ export function Hero() {
   const [trackingNumber, setTrackingNumber] = useState("")
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
 
-  // Efecto para rotar palabras (sin cambios)
+  // Efecto para rotar palabras
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length)
@@ -19,7 +19,7 @@ export function Hero() {
     return () => clearInterval(interval)
   }, [])
 
-  // --- NUEVA FUNCIÓN DE RASTREO ---
+  // --- FUNCIÓN DE RASTREO ---
   const handleTracking = () => {
     // Si el usuario escribió un número, lo mandamos directo a la búsqueda
     if (trackingNumber.trim()) {
@@ -29,6 +29,9 @@ export function Hero() {
       window.open('https://www.aftership.com/track', '_blank')
     }
   }
+
+  // Link de WhatsApp
+  const whatsappLink = "https://wa.me/573104183528?text=Hola%20AllPacco,%20quisiera%20cotizar%20un%20env%C3%ADo."
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -90,7 +93,6 @@ export function Hero() {
               </div>
               <Button
                 size="lg"
-                // AÑADIDO: Evento onClick
                 onClick={handleTracking} 
                 className="h-14 px-8 bg-cyan-500 hover:bg-cyan-400 text-background font-bold text-lg rounded-xl shadow-lg shadow-cyan-500/30 transition-all hover:shadow-cyan-500/50 hover:scale-105 cursor-pointer"
               >
@@ -101,14 +103,17 @@ export function Hero() {
             </div>
           </div>
 
+          {/* Botón de Cotización (ACTUALIZADO con WhatsApp) */}
           <div className="mt-6">
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 px-8 bg-yellow-400 hover:bg-yellow-300 text-background font-bold rounded-xl border-yellow-400 hover:border-yellow-300 shadow-lg shadow-yellow-500/20"
-            >
-              Cotiza tu importación
-            </Button>
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 bg-yellow-400 hover:bg-yellow-300 text-background font-bold rounded-xl border-yellow-400 hover:border-yellow-300 shadow-lg shadow-yellow-500/20"
+              >
+                Cotiza tu importación
+              </Button>
+            </a>
           </div>
         </div>
 
