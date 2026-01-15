@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  
+  // Enlace directo a tu WhatsApp
+  const whatsappLink = "https://wa.me/573104183528?text=Hola%20AllPacco,%20quisiera%20cotizar%20un%20env%C3%ADo."
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/10">
@@ -40,9 +43,12 @@ export function Navbar() {
             <a href="#contacto" className="text-muted-foreground hover:text-foreground transition-colors">
               Contacto
             </a>
-            <Button className="bg-cyan-500 hover:bg-cyan-400 text-background font-semibold px-6 shadow-lg shadow-cyan-500/25">
-              Cotizar Ahora
-            </Button>
+            {/* Botón de Escritorio actualizado */}
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <Button className="bg-cyan-500 hover:bg-cyan-400 text-background font-semibold px-6 shadow-lg shadow-cyan-500/25">
+                Cotizar Ahora
+              </Button>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,9 +78,12 @@ export function Navbar() {
             <a href="#contacto" className="block text-muted-foreground hover:text-foreground transition-colors">
               Contacto
             </a>
-            <Button className="w-full bg-cyan-500 hover:bg-cyan-400 text-background font-semibold shadow-lg shadow-cyan-500/25">
-              Cotizar Ahora
-            </Button>
+            {/* Botón Móvil actualizado */}
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="block w-full">
+              <Button className="w-full bg-cyan-500 hover:bg-cyan-400 text-background font-semibold shadow-lg shadow-cyan-500/25">
+                Cotizar Ahora
+              </Button>
+            </a>
           </div>
         )}
       </div>
