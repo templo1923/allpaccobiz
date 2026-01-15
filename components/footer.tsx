@@ -15,6 +15,8 @@ import {
 } from "lucide-react"
 
 export function Footer() {
+  const whatsappLink = "https://wa.me/573104183528?text=Hola%20AllPacco,%20quisiera%20cotizar%20un%20env%C3%ADo."
+
   return (
     <footer id="contacto" className="border-t border-white/10 bg-white/[0.02]">
       {/* CTA Section */}
@@ -31,13 +33,17 @@ export function Footer() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="#"
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center h-14 px-8 bg-cyan-500 hover:bg-cyan-400 text-background font-bold rounded-xl shadow-lg shadow-cyan-500/30 transition-all hover:shadow-cyan-500/50 hover:scale-105"
               >
                 Solicitar Cotización
               </a>
               <a
-                href="#"
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center h-14 px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-semibold rounded-xl transition-all"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
@@ -144,11 +150,15 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>+1 (305) 123-4567</span>
+                <a href="tel:+13051234567" className="hover:text-cyan-400 transition-colors">
+                  +1 (305) 123-4567
+                </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>usa@allpacco.biz</span>
+                <a href="mailto:usa@allpacco.biz" className="hover:text-cyan-400 transition-colors">
+                  usa@allpacco.biz
+                </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Clock className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -157,7 +167,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Colombia Office */}
+          {/* Colombia Office - ACTUALIZADA */}
           <div>
             <h4 className="text-foreground font-semibold mb-6 flex items-center gap-2">
               <span className="text-lg">🇨🇴</span> Oficina Colombia
@@ -173,11 +183,16 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>+57 (604) 123-4567</span>
+                {/* Aquí está el cambio del número */}
+                <a href="tel:+573104183528" className="hover:text-cyan-400 transition-colors font-bold text-foreground">
+                  +57 310 418 3528
+                </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>colombia@allpacco.biz</span>
+                <a href="mailto:colombia@allpacco.biz" className="hover:text-cyan-400 transition-colors">
+                  colombia@allpacco.biz
+                </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Clock className="w-4 h-4 text-cyan-400 shrink-0" />
