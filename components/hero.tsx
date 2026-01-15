@@ -7,16 +7,17 @@ import { Input } from "@/components/ui/input"
 
 const rotatingWords = ["fácil", "Económica", "& segura"]
 
-// --- COMPONENTE INTERNO PARA ANIMAR NÚMEROS ---
+// --- COMPONENTE INTERNO INTELIGENTE (Detecta Scroll) ---
 function AnimatedStat({ value }: { value: string }) {
   const [displayValue, setDisplayValue] = useState(0)
   const [suffix, setSuffix] = useState("")
   const [target, setTarget] = useState(0)
   const [hasDecimal, setHasDecimal] = useState(false)
+  const [isVisible, setIsVisible] = useState(false) // Nuevo estado: ¿Ya me vieron?
+  const elementRef = useRef<HTMLSpanElement>(null) // Referencia al elemento
 
+  // 1. Analizar el valor (separar número de texto)
   useEffect(() => {
-    // Expresión regular para separar número (incluso decimal) del texto extra
-    // Ejemplo: "99.8%" -> match[1]="99.8", match[3]="%"
     const match = value.match(/^([\d\.]+)(.*)$/)
     if (match) {
       const num = parseFloat(match[1])
@@ -26,15 +27,37 @@ function AnimatedStat({ value }: { value: string }) {
     }
   }, [value])
 
+  // 2. Detectar cuando el elemento entra en pantalla
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true) // ¡Ya me vieron!
+          observer.disconnect() // Dejar de observar (solo anima 1 vez)
+        }
+      },
+      { threshold: 0.1 } // Se activa cuando al menos el 10% del elemento es visible
+    )
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  // 3. Ejecutar animación SOLO si es visible (isVisible === true)
+  useEffect(() => {
+    if (!isVisible || target === 0) return
+
     let startTime: number
-    const duration = 2000 // Duración de la animación (2 segundos)
+    const duration = 2000 // 2 segundos
     
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime
       const progress = Math.min((currentTime - startTime) / duration, 1)
       
-      // Función de suavizado (Ease Out Expo) para que frene al final
+      // Efecto de suavizado (frena al final)
       const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
       
       setDisplayValue(target * easeProgress)
@@ -44,18 +67,15 @@ function AnimatedStat({ value }: { value: string }) {
       }
     }
 
-    if (target > 0) {
-      requestAnimationFrame(animate)
-    }
-  }, [target])
+    requestAnimationFrame(animate)
+  }, [isVisible, target])
 
-  // Formateo final: Si tenía decimal, mostramos 1 decimal. Si no, entero.
   const formattedNumber = hasDecimal 
     ? displayValue.toFixed(1) 
     : Math.round(displayValue).toString()
 
   return (
-    <span>
+    <span ref={elementRef}>
       {formattedNumber}{suffix}
     </span>
   )
@@ -87,7 +107,7 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-36">
-      {/* Background Image with Dark Overlay */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
           src="/cargo-ship-containers-port-aerial-view-night.jpg"
@@ -167,7 +187,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* STATS ANIMADOS (Aquí está la magia) */}
+        {/* STATS ANIMADOS CON SCROLL TRIGGER */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
           {[
             { value: "50K+", label: "Envíos Aéreos" },
@@ -177,7 +197,6 @@ export function Hero() {
           ].map((stat, index) => (
             <div key={index} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
               <div className="text-3xl md:text-4xl font-bold text-cyan-400 mb-1 tabular-nums">
-                {/* Usamos nuestro nuevo componente animado */}
                 <AnimatedStat value={stat.value} />
               </div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
