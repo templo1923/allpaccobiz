@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react"
+import { useState, useMemo, useEffect } from "react"
+import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const flightDates2026 = [
@@ -71,24 +71,22 @@ const flightDates2026 = [
 ]
 
 const months = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ]
 
 export function Itinerary() {
-  const [selectedMonth, setSelectedMonth] = useState(0) // January = 0
+  const [selectedMonth, setSelectedMonth] = useState(0)
+  const [today, setToday] = useState("")
 
-  // Filter flights by selected month
+  // Establecer fecha actual al cargar (evita errores de servidor/cliente)
+  useEffect(() => {
+    const now = new Date()
+    const dateString = now.toISOString().split('T')[0] // YYYY-MM-DD
+    setToday(dateString)
+    setSelectedMonth(now.getMonth()) // Selecciona el mes actual por defecto
+  }, [])
+
   const filteredFlights = useMemo(() => {
     const monthStr = String(selectedMonth + 1).padStart(2, "0")
     return flightDates2026.filter((flight) => flight.date.includes(`-${monthStr}-`))
@@ -102,54 +100,56 @@ export function Itinerary() {
     setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))
   }
 
+  // Lógica para determinar el estilo y texto según la fecha
+  const getFlightStatus = (flightDate: string) => {
+    if (!today) return { status: "loading", label: "Cargando...", color: "text-gray-400", bg: "bg-gray-500/10", dot: "bg-gray-400" }
+    
+    if (flightDate < today) {
+      return { status: "past", label: "Realizado", color: "text-slate-500", bg: "bg-slate-500/10", dot: "bg-slate-500", icon: CheckCircle2 }
+    } else if (flightDate === today) {
+      return { status: "today", label: "Programado para Hoy", color: "text-yellow-400", bg: "bg-yellow-500/10", dot: "bg-yellow-400 animate-pulse", icon: Clock }
+    } else {
+      return { status: "future", label: "Programado", color: "text-green-400", bg: "bg-green-500/10", dot: "bg-green-400", icon: Plane }
+    }
+  }
+
   return (
     <section id="itinerario" className="py-24 md:py-32 bg-white/[0.02]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        
+        {/* Header */}
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium mb-4 border border-cyan-500/20">
             <Calendar className="w-4 h-4 inline mr-2" />
             Vuelos Comerciales 2026
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
-            Itinerario de
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">Vuelos</span>
+            Itinerario de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">Vuelos</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
             Todos los sábados despachamos vuelos comerciales desde Miami a Colombia. Planifica mejor tus envíos.
           </p>
         </div>
 
+        {/* Navegación Meses */}
         <div className="max-w-4xl mx-auto mb-10">
           <div className="flex items-center justify-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePrevMonth}
-              className="border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-cyan-500/30"
-            >
+            <Button variant="outline" size="icon" onClick={handlePrevMonth} className="border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-cyan-500/30">
               <ChevronLeft className="w-5 h-5" />
             </Button>
-
             <div className="min-w-[200px] text-center">
               <span className="text-2xl font-bold text-foreground">{months[selectedMonth]}</span>
               <span className="text-xl text-muted-foreground ml-2">2026</span>
             </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleNextMonth}
-              className="border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-cyan-500/30"
-            >
+            <Button variant="outline" size="icon" onClick={handleNextMonth} className="border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-cyan-500/30">
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </div>
 
+        {/* Pestañas de Meses */}
         <div className="max-w-4xl mx-auto mb-10 overflow-x-auto pb-2">
-          <div className="flex gap-2 justify-center flex-wrap">
+          <div className="flex gap-2 justify-center flex-wrap min-w-max md:min-w-0 px-4 md:px-0">
             {months.map((month, index) => (
               <button
                 key={month}
@@ -166,57 +166,64 @@ export function Itinerary() {
           </div>
         </div>
 
-        {/* Flight Schedule */}
-        <div className="max-w-4xl mx-auto">
-          {/* Route Info */}
-          <div className="flex items-center justify-center gap-4 mb-8 p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-cyan-400" />
-              <span className="font-semibold text-foreground">Miami (MIA)</span>
-            </div>
-            <Plane className="w-5 h-5 text-yellow-400" />
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-cyan-400" />
-              <span className="font-semibold text-foreground">Colombia (BOG/MDE)</span>
-            </div>
-          </div>
+        {/* Información de Ruta */}
+        <div className="max-w-4xl mx-auto mb-8 p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/20 flex justify-center items-center gap-4 text-sm md:text-base">
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-cyan-400"/> Miami (MIA)</div>
+            <Plane className="w-4 h-4 text-yellow-400 rotate-90 md:rotate-0" />
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-cyan-400"/> Colombia (BOG/MDE)</div>
+        </div>
 
-          {/* Flights Grid */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            {filteredFlights.map((flight, index) => (
-              <div
-                key={index}
-                className="group p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
-                    <Plane className="w-6 h-6 text-cyan-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">{flight.day}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span>Vuelo comercial</span>
+        {/* Grid de Vuelos */}
+        <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
+            {filteredFlights.map((flight, index) => {
+              const status = getFlightStatus(flight.date)
+              const StatusIcon = status.icon || Plane // Fallback por seguridad
+
+              return (
+                <div 
+                  key={index}
+                  className={`
+                    group p-5 rounded-2xl border transition-all duration-300
+                    ${status.status === 'past' 
+                      ? 'bg-white/[0.01] border-white/5 opacity-60 hover:opacity-100' // Estilo apagado para pasados
+                      : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 shadow-lg'} // Estilo brillante para futuros
+                  `}
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Icono */}
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${status.status === 'past' ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500/10 text-cyan-400'}`}>
+                      <StatusIcon className="w-6 h-6" />
                     </div>
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    Programado
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+                    
+                    <div className="flex-1">
+                      <p className={`font-semibold ${status.status === 'past' ? 'text-muted-foreground line-through decoration-slate-600' : 'text-foreground'}`}>
+                        {flight.day}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>Vuelo comercial</span>
+                      </div>
+                    </div>
 
-          {/* Empty State */}
-          {filteredFlights.length === 0 && (
+                    {/* Badge de Estado */}
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-transparent ${status.bg} ${status.color}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                      {status.label}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+        </div>
+
+        {/* Estado Vacío */}
+        {filteredFlights.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No hay vuelos programados para este mes.</p>
             </div>
-          )}
-        </div>
+        )}
 
-        {/* Note */}
+        {/* Nota al pie */}
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground">
             * Los horarios pueden variar según condiciones operativas.{" "}
