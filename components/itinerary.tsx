@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle2 } from "lucide-react"
+import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle2, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const flightDates2026 = [
@@ -79,12 +79,14 @@ export function Itinerary() {
   const [selectedMonth, setSelectedMonth] = useState(0)
   const [today, setToday] = useState("")
 
-  // Establecer fecha actual al cargar (evita errores de servidor/cliente)
+  // Detectamos la fecha actual al cargar para evitar errores de servidor/cliente
   useEffect(() => {
     const now = new Date()
-    const dateString = now.toISOString().split('T')[0] // YYYY-MM-DD
+    const dateString = now.toISOString().split('T')[0] // Formato YYYY-MM-DD
     setToday(dateString)
-    setSelectedMonth(now.getMonth()) // Selecciona el mes actual por defecto
+    
+    // Seleccionamos automáticamente el mes actual
+    setSelectedMonth(now.getMonth())
   }, [])
 
   const filteredFlights = useMemo(() => {
@@ -100,16 +102,47 @@ export function Itinerary() {
     setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))
   }
 
-  // Lógica para determinar el estilo y texto según la fecha
+  // --- LÓGICA DE WHATSAPP ---
+  const handleBooking = (day: string) => {
+    const phone = "573104183528"
+    const text = encodeURIComponent(`Hola AllPacco, quiero agendar para realizar envío el día ${day}.`)
+    window.open(`https://wa.me/${phone}?text=${text}`, "_blank")
+  }
+
+  // Función para determinar el estilo y estado
   const getFlightStatus = (flightDate: string) => {
-    if (!today) return { status: "loading", label: "Cargando...", color: "text-gray-400", bg: "bg-gray-500/10", dot: "bg-gray-400" }
+    if (!today) return { status: "loading", label: "Cargando..." }
     
     if (flightDate < today) {
-      return { status: "past", label: "Realizado", color: "text-slate-500", bg: "bg-slate-500/10", dot: "bg-slate-500", icon: CheckCircle2 }
+      return { 
+        status: "past", 
+        label: "Realizado", 
+        color: "text-slate-500", 
+        bg: "bg-slate-500/10", 
+        dot: "bg-slate-500", 
+        icon: CheckCircle2,
+        containerClass: "bg-white/[0.01] border-white/5 opacity-60 cursor-default" // Estilo apagado, no clic
+      }
     } else if (flightDate === today) {
-      return { status: "today", label: "Programado para Hoy", color: "text-yellow-400", bg: "bg-yellow-500/10", dot: "bg-yellow-400 animate-pulse", icon: Clock }
+      return { 
+        status: "today", 
+        label: "Programado para Hoy", 
+        color: "text-yellow-400", 
+        bg: "bg-yellow-500/10", 
+        dot: "bg-yellow-400 animate-pulse", 
+        icon: Clock,
+        containerClass: "bg-yellow-500/5 border-yellow-500/20 hover:bg-yellow-500/10 cursor-pointer shadow-[0_0_20px_rgba(250,204,21,0.1)]" // Estilo destacado
+      }
     } else {
-      return { status: "future", label: "Programado", color: "text-green-400", bg: "bg-green-500/10", dot: "bg-green-400", icon: Plane }
+      return { 
+        status: "future", 
+        label: "Programado", 
+        color: "text-green-400", 
+        bg: "bg-green-500/10", 
+        dot: "bg-green-400", 
+        icon: Plane,
+        containerClass: "bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 cursor-pointer" // Estilo estándar interactivo
+      }
     }
   }
 
@@ -127,7 +160,7 @@ export function Itinerary() {
             Itinerario de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">Vuelos</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Todos los sábados despachamos vuelos comerciales desde Miami a Colombia. Planifica mejor tus envíos.
+            Todos los sábados despachamos vuelos comerciales desde Miami a Colombia. Haz clic en una fecha para agendar tu envío.
           </p>
         </div>
 
@@ -147,7 +180,7 @@ export function Itinerary() {
           </div>
         </div>
 
-        {/* Pestañas de Meses */}
+        {/* Pestañas Meses */}
         <div className="max-w-4xl mx-auto mb-10 overflow-x-auto pb-2">
           <div className="flex gap-2 justify-center flex-wrap min-w-max md:min-w-0 px-4 md:px-0">
             {months.map((month, index) => (
@@ -166,7 +199,7 @@ export function Itinerary() {
           </div>
         </div>
 
-        {/* Información de Ruta */}
+        {/* Info Ruta */}
         <div className="max-w-4xl mx-auto mb-8 p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/20 flex justify-center items-center gap-4 text-sm md:text-base">
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-cyan-400"/> Miami (MIA)</div>
             <Plane className="w-4 h-4 text-yellow-400 rotate-90 md:rotate-0" />
@@ -177,19 +210,18 @@ export function Itinerary() {
         <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
             {filteredFlights.map((flight, index) => {
               const status = getFlightStatus(flight.date)
-              const StatusIcon = status.icon || Plane // Fallback por seguridad
+              const StatusIcon = status.icon || Plane
 
               return (
                 <div 
                   key={index}
+                  onClick={() => status.status !== 'past' && handleBooking(flight.day)}
                   className={`
-                    group p-5 rounded-2xl border transition-all duration-300
-                    ${status.status === 'past' 
-                      ? 'bg-white/[0.01] border-white/5 opacity-60 hover:opacity-100' // Estilo apagado para pasados
-                      : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 shadow-lg'} // Estilo brillante para futuros
+                    group p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden
+                    ${status.containerClass}
                   `}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 relative z-10">
                     {/* Icono */}
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${status.status === 'past' ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500/10 text-cyan-400'}`}>
                       <StatusIcon className="w-6 h-6" />
@@ -200,12 +232,18 @@ export function Itinerary() {
                         {flight.day}
                       </p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>Vuelo comercial</span>
+                        {status.status === 'past' ? (
+                           <span>Vuelo finalizado</span>
+                        ) : (
+                           <div className="flex items-center gap-2 group-hover:text-cyan-400 transition-colors">
+                             <MessageCircle className="w-4 h-4" /> 
+                             <span>Clic para agendar</span>
+                           </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Badge de Estado */}
+                    {/* Badge */}
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-transparent ${status.bg} ${status.color}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
                       {status.label}
@@ -216,14 +254,10 @@ export function Itinerary() {
             })}
         </div>
 
-        {/* Estado Vacío */}
         {filteredFlights.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No hay vuelos programados para este mes.</p>
-            </div>
+            <div className="text-center py-12 text-muted-foreground">No hay vuelos programados para este mes.</div>
         )}
 
-        {/* Nota al pie */}
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground">
             * Los horarios pueden variar según condiciones operativas.{" "}
