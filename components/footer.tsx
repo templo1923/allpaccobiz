@@ -130,21 +130,21 @@ export function Footer() {
               <li className="flex items-start gap-3 text-muted-foreground">
                 <MapPin className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
                 <span>
-                  8600 NW 17th St, Suite 100
+                  2856 NW 112th Ave #1,
                   <br />
-                  Doral, FL 33126
+                  Doral, FL 33172, Estados Unidos
                 </span>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
                 <a href="tel:+13051234567" className="hover:text-cyan-400 transition-colors">
-                  +1 (305) 123-4567
+                  +1 (315) 918-6181
                 </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="mailto:usa@allpacco.biz" className="hover:text-cyan-400 transition-colors">
-                  usa@allpacco.biz
+                <a href="mailto:pacco@allpacco.biz" className="hover:text-cyan-400 transition-colors">
+                  pacco@allpacco.biz
                 </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
@@ -177,8 +177,8 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="mailto:servicioalcliente@allpacco.biz" className="hover:text-cyan-400 transition-colors">
-                  servicioalcliente@allpacco.biz
+                <a href="mailto:pacco@allpacco.biz" className="hover:text-cyan-400 transition-colors">
+                  pacco@allpacco.biz
                 </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
@@ -193,7 +193,7 @@ export function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground uppercase tracking-wider">
-            <p>© 2025 ALLPACCO - Todos los Derechos Reservados.</p>
+            <p>© 2026 ALLPACCO - Todos los Derechos Reservados.</p>
             <div className="flex gap-4">
                <a href="/privacidad" className="hover:text-cyan-400 transition-colors">Política de Privacidad</a>
                <span className="text-white/20">|</span>
