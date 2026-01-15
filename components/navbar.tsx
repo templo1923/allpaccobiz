@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Navbar() {
@@ -15,13 +15,20 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-24">
           
-          {/* --- LOGO OFICIAL (Con Filtro Mágico para volverlo Blanco) --- */}
-          <a href="/" className="flex-shrink-0 hover:opacity-90 transition-opacity focus:outline-none">
+          {/* --- LOGO COMPUESTO (Cajita + Imagen) --- */}
+          <a href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity focus:outline-none group">
+             
+             {/* 1. LA CAJITA (Que no querías quitar) */}
+             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.3)] group-hover:scale-105 transition-transform">
+                <Package className="w-6 h-6 text-background" />
+             </div>
+
+             {/* 2. TU LOGO DE IMAGEN (Con filtro para volverse blanco) */}
              <img 
                src="/logo-allpacco.png" 
                alt="AllPacco Logística" 
-               // AQUÍ ESTÁ EL TRUCO: 'invert brightness-0' vuelve cualquier imagen negra en blanca pura.
-               className="h-16 w-auto object-contain invert brightness-0 filter" 
+               // 'invert brightness-0' vuelve el negro a blanco. Ajusta h-12 según necesites.
+               className="h-12 w-auto object-contain invert brightness-0 filter" 
              />
           </a>
 
