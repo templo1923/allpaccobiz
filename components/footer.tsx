@@ -57,15 +57,20 @@ export function Footer() {
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-white/5">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand Column */}
+          {/* Brand Column (ACTUALIZADO CON LOGO DE IMAGEN) */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
+              {/* 1. LA CAJITA (Igual que en Navbar) */}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                 <Package className="w-6 h-6 text-background" />
               </div>
-              <span className="text-2xl font-bold text-foreground">
-                All<span className="text-cyan-400">Pacco</span>
-              </span>
+              
+              {/* 2. TU LOGO DE IMAGEN */}
+              <img 
+                src="/logo-allpacco.png" 
+                alt="AllPacco Logística" 
+                className="h-10 w-auto object-contain" 
+              />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               Tu socio estratégico en logística internacional. Conectamos tu negocio con el mundo desde 2014.
@@ -83,52 +88,34 @@ export function Footer() {
             </div>
           </div>
 
+          {/* Secciones (ACTUALIZADO CON ENLACES LEGALES) */}
           <div>
             <h4 className="text-foreground font-semibold mb-6">Secciones</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors"
-                >
-                  <Home className="w-4 h-4 text-yellow-400" />
-                  Inicio
+                <a href="/" className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors">
+                  <Home className="w-4 h-4 text-yellow-400" /> Inicio
                 </a>
               </li>
               <li>
-                <a
-                  href="#blog"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors"
-                >
-                  <BookOpen className="w-4 h-4 text-yellow-400" />
-                  Blog informativo
+                <a href="#blog" className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors">
+                  <BookOpen className="w-4 h-4 text-yellow-400" /> Blog informativo
                 </a>
               </li>
               <li>
-                <a
-                  href="#contacto"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors"
-                >
-                  <MapPin className="w-4 h-4 text-yellow-400" />
-                  Contacto
+                <a href="#contacto" className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors">
+                  <MapPin className="w-4 h-4 text-yellow-400" /> Contacto
+                </a>
+              </li>
+              {/* Enlaces Legales Reales */}
+              <li>
+                <a href="/terminos" className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors">
+                  <Shield className="w-4 h-4 text-yellow-400" /> Términos y condiciones
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors"
-                >
-                  <Shield className="w-4 h-4 text-yellow-400" />
-                  Términos y condiciones
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors"
-                >
-                  <Fingerprint className="w-4 h-4 text-yellow-400" />
-                  Políticas de privacidad
+                <a href="/privacidad" className="flex items-center gap-2 text-muted-foreground hover:text-cyan-400 transition-colors">
+                  <Fingerprint className="w-4 h-4 text-yellow-400" /> Políticas de privacidad
                 </a>
               </li>
             </ul>
@@ -167,7 +154,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Colombia Office - ACTUALIZADA */}
+          {/* Colombia Office - ACTUALIZADA CON TU NÚMERO */}
           <div>
             <h4 className="text-foreground font-semibold mb-6 flex items-center gap-2">
               <span className="text-lg">🇨🇴</span> Oficina Colombia
@@ -176,22 +163,22 @@ export function Footer() {
               <li className="flex items-start gap-3 text-muted-foreground">
                 <MapPin className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
                 <span>
-                  Cra 43A # 1 Sur - 200
+                  Calle 70ª # 42 - 50
                   <br />
                   Medellín, Antioquia
                 </span>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
-                {/* Aquí está el cambio del número */}
+                {/* Número corregido */}
                 <a href="tel:+573104183528" className="hover:text-cyan-400 transition-colors font-bold text-foreground">
                   +57 310 418 3528
                 </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="mailto:colombia@allpacco.biz" className="hover:text-cyan-400 transition-colors">
-                  colombia@allpacco.biz
+                <a href="mailto:servicioalcliente@allpacco.biz" className="hover:text-cyan-400 transition-colors">
+                  servicioalcliente@allpacco.biz
                 </a>
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
@@ -207,7 +194,11 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground uppercase tracking-wider">
             <p>© 2025 ALLPACCO - Todos los Derechos Reservados.</p>
-            <p>Derechos de Usuario | Política de Privacidad | Indicadores de Calidad</p>
+            <div className="flex gap-4">
+               <a href="/privacidad" className="hover:text-cyan-400 transition-colors">Política de Privacidad</a>
+               <span className="text-white/20">|</span>
+               <a href="/terminos" className="hover:text-cyan-400 transition-colors">Derechos de Usuario</a>
+            </div>
           </div>
         </div>
       </div>
