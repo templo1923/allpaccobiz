@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { 
   FileText, Search, MapPin, Globe, Download, CheckCircle2, 
-  Calculator, Scale, Plane, Package, Smartphone, Bike, Ship, Truck, Box
+  Calculator, Scale, Plane, Package, Smartphone, Bike, Ship, Truck, Box, ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,14 +48,21 @@ const coverageData = [
   }
 ]
 
-// 2. TARIFAS CALCULADORA
+// 2. DATA DE CIUDADES NACIONALES (Para el nuevo diseño)
+const colombiaCities = [
+  "Bogotá D.C.", "Medellín", "Cali", "Barranquilla", 
+  "Cartagena", "Bucaramanga", "Pereira", "Manizales", 
+  "Cúcuta", "Santa Marta", "Ibagué", "Villavicencio"
+]
+
+// 3. TARIFAS CALCULADORA
 const shippingRates: Record<string, number> = {
   china: 8,
   usa: 6,
   espana: 8
 }
 
-// 3. DATA DE SERVICIOS
+// 4. DATA DE SERVICIOS
 const servicesList = [
   {
     title: "Tarifa COURIER (0-8 lbs)",
@@ -79,7 +86,7 @@ const servicesList = [
     bg: "bg-purple-500/10"
   },
   {
-    title: "Celulares, Laptops y Tablets",
+    title: "Celulares y Laptops",
     icon: Smartphone,
     desc: "Manejo especial para tecnología y dispositivos electrónicos.",
     color: "text-pink-400",
@@ -107,9 +114,25 @@ export function Rates() {
     )
   })).filter(group => group.countries.length > 0)
 
+  // CALCULADORA: Lógica mejorada anti-negativos
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Si está vacío, lo seteamos vacío
+    if (value === "") {
+      setWeight("")
+      return
+    }
+    // Convertimos a número
+    const num = parseFloat(value)
+    // Si es negativo, lo ignoramos o lo ponemos en positivo (aquí lo ignoramos para que no escriban el menos)
+    if (num < 0) return 
+    
+    setWeight(value)
+  }
+
   useEffect(() => {
     const pounds = parseFloat(weight)
-    if (!pounds || isNaN(pounds)) {
+    if (!pounds || isNaN(pounds) || pounds < 0) {
       setTotalCost(null)
       return
     }
@@ -168,7 +191,15 @@ export function Rates() {
                         </div>
                         <div className="space-y-2">
                             <Label className="text-slate-300">Peso (Libras)</Label>
-                            <Input type="number" placeholder="Ej: 10" value={weight} onChange={(e) => setWeight(e.target.value)} className="h-12 bg-black/20 border-white/10 text-lg" />
+                            {/* Input con validación de negativos */}
+                            <Input 
+                              type="number" 
+                              min="0"
+                              placeholder="Ej: 10" 
+                              value={weight} 
+                              onChange={handleWeightChange} // Usamos la nueva función
+                              className="h-12 bg-black/20 border-white/10 text-lg" 
+                            />
                         </div>
                     </div>
 
@@ -193,12 +224,12 @@ export function Rates() {
         <div className="mb-20 max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold text-center mb-10">Tipos de Tarifas y Carga</h3>
             
-            {/* AQUI ESTÁ EL CAMBIO: Usamos flex flex-wrap justify-center gap-6 */}
+            {/* Flexbox para que la última tarjeta quede centrada si son impares */}
             <div className="flex flex-wrap justify-center gap-6">
                 {servicesList.map((item, idx) => {
                     const Icon = item.icon
                     return (
-                        <div key={idx} className="group w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 flex flex-col items-center text-center">
+                        <div key={idx} className="group w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 flex flex-col items-center text-center hover:-translate-y-1">
                             <div className={`w-14 h-14 rounded-xl ${item.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                                 <Icon className={`w-7 h-7 ${item.color}`} />
                             </div>
@@ -210,62 +241,36 @@ export function Rates() {
             </div>
         </div>
 
-        {/* 3. COBERTURA NACIONAL (CON MAPA SVG INLINE) */}
-        <div className="mb-20 max-w-6xl mx-auto bg-gradient-to-r from-blue-950 to-slate-950 rounded-3xl p-8 md:p-12 border border-white/10 relative overflow-hidden">
-            <div className="absolute right-0 top-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            
-            <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
-                {/* Texto */}
-                <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold mb-4 border border-yellow-500/20">
+        {/* 3. COBERTURA NACIONAL (REDISEÑO SIN MAPA - ESTILO LISTA PRO) */}
+        <div className="mb-20 max-w-5xl mx-auto">
+            <div className="bg-gradient-to-r from-blue-950/50 to-slate-950/50 rounded-3xl border border-white/10 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+                
+                <div className="p-8 md:p-12 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold mb-6 border border-yellow-500/20">
                         <Truck className="w-3 h-3" /> ENVIAMOS A TODA COLOMBIA
                     </div>
                     <h3 className="text-3xl font-bold text-white mb-4">Cobertura Nacional Garantizada</h3>
-                    <p className="text-slate-300 mb-8 leading-relaxed">
-                        Llegamos a donde otros no llegan. Desde las capitales principales hasta los municipios más alejados, tu paquete viaja seguro con nuestra red de distribución nacional.
+                    <p className="text-slate-300 max-w-2xl mx-auto mb-10">
+                        Llevamos tus paquetes hasta la puerta de tu casa, sin importar en qué ciudad te encuentres. Nuestra red logística cubre el 100% del territorio nacional.
                     </p>
-                    <div className="grid grid-cols-2 gap-3 text-sm text-slate-400">
-                        {['Bogotá D.C.', 'Medellín', 'Cali', 'Barranquilla', 'Bucaramanga', 'Cartagena', 'Pereira', 'Cúcuta'].map(city => (
-                            <div key={city} className="flex items-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-cyan-500 shrink-0"/> {city}
+
+                    {/* Grid de Ciudades (Visualmente atractivo) */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {colombiaCities.map((city, i) => (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/30 hover:bg-white/10 transition-colors">
+                                <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
+                                    <MapPin className="w-4 h-4 text-cyan-400" />
+                                </div>
+                                <span className="text-sm font-medium text-slate-200">{city}</span>
                             </div>
                         ))}
                     </div>
-                </div>
-
-                {/* Mapa SVG de Colombia (Inline) */}
-                <div className="relative h-[400px] w-full flex items-center justify-center">
-                    {/* Silueta de Colombia SVG */}
-                    <svg viewBox="0 0 450 600" className="h-full w-auto drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                        <path
-                            fill="#0f172a"
-                            stroke="#06b6d4"
-                            strokeWidth="2"
-                            d="M130,100 L150,90 L180,80 L200,90 L220,110 L230,140 L260,150 L280,180 L290,210 L280,250 L260,280 L260,320 L280,350 L280,380 L250,420 L250,450 L230,480 L200,480 L180,450 L160,420 L140,400 L120,350 L100,300 L90,250 L80,200 L90,150 L110,120 Z" 
-                            className="opacity-80"
-                        />
-                        {/* Puntos de Ciudades (Brillantes) */}
-                        <circle cx="180" cy="250" r="4" fill="#fbbf24" className="animate-ping" /> {/* Bogotá */}
-                        <circle cx="180" cy="250" r="3" fill="#ffffff" />
-                        
-                        <circle cx="150" cy="200" r="4" fill="#06b6d4" className="animate-ping delay-300" /> {/* Medellín */}
-                        <circle cx="150" cy="200" r="3" fill="#ffffff" />
-
-                        <circle cx="140" cy="280" r="4" fill="#06b6d4" className="animate-ping delay-500" /> {/* Cali */}
-                        <circle cx="140" cy="280" r="3" fill="#ffffff" />
-                        
-                        <circle cx="170" cy="120" r="4" fill="#06b6d4" className="animate-ping delay-700" /> {/* Barranquilla */}
-                        <circle cx="170" cy="120" r="3" fill="#ffffff" />
-                    </svg>
                     
-                    {/* Etiqueta flotante decorativa */}
-                    <div className="absolute bottom-10 right-10 bg-black/50 backdrop-blur-md border border-white/10 p-3 rounded-xl text-xs text-white">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> Sede Principal
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyan-400"></span> Cobertura Activa
-                        </div>
+                    <div className="mt-8 pt-8 border-t border-white/5">
+                        <p className="text-sm text-slate-400 flex items-center justify-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-green-400" /> Y el resto de municipios del país a través de nuestras aliadas nacionales.
+                        </p>
                     </div>
                 </div>
             </div>
