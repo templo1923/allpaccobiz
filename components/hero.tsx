@@ -1,11 +1,65 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Search, ArrowRight, Plane } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 const rotatingWords = ["fácil", "Económica", "& segura"]
+
+// --- COMPONENTE INTERNO PARA ANIMAR NÚMEROS ---
+function AnimatedStat({ value }: { value: string }) {
+  const [displayValue, setDisplayValue] = useState(0)
+  const [suffix, setSuffix] = useState("")
+  const [target, setTarget] = useState(0)
+  const [hasDecimal, setHasDecimal] = useState(false)
+
+  useEffect(() => {
+    // Expresión regular para separar número (incluso decimal) del texto extra
+    // Ejemplo: "99.8%" -> match[1]="99.8", match[3]="%"
+    const match = value.match(/^([\d\.]+)(.*)$/)
+    if (match) {
+      const num = parseFloat(match[1])
+      setTarget(num)
+      setSuffix(match[2])
+      setHasDecimal(match[1].includes("."))
+    }
+  }, [value])
+
+  useEffect(() => {
+    let startTime: number
+    const duration = 2000 // Duración de la animación (2 segundos)
+    
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+      const progress = Math.min((currentTime - startTime) / duration, 1)
+      
+      // Función de suavizado (Ease Out Expo) para que frene al final
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
+      
+      setDisplayValue(target * easeProgress)
+
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+
+    if (target > 0) {
+      requestAnimationFrame(animate)
+    }
+  }, [target])
+
+  // Formateo final: Si tenía decimal, mostramos 1 decimal. Si no, entero.
+  const formattedNumber = hasDecimal 
+    ? displayValue.toFixed(1) 
+    : Math.round(displayValue).toString()
+
+  return (
+    <span>
+      {formattedNumber}{suffix}
+    </span>
+  )
+}
 
 export function Hero() {
   const [trackingNumber, setTrackingNumber] = useState("")
@@ -21,11 +75,9 @@ export function Hero() {
 
   // --- FUNCIÓN DE RASTREO ---
   const handleTracking = () => {
-    // Si el usuario escribió un número, lo mandamos directo a la búsqueda
     if (trackingNumber.trim()) {
       window.open(`https://www.aftership.com/track?t=${trackingNumber}`, '_blank')
     } else {
-      // Si está vacío, solo abrimos la página de rastreo general
       window.open('https://www.aftership.com/track', '_blank')
     }
   }
@@ -34,7 +86,6 @@ export function Hero() {
   const whatsappLink = "https://wa.me/573104183528?text=Hola%20AllPacco,%20quisiera%20cotizar%20un%20env%C3%ADo."
 
   return (
-    // CORRECCIÓN AQUÍ: Cambié 'pt-20' por 'pt-36' para que el menú no tape el título
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-36">
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0">
@@ -53,7 +104,7 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Badge - Ahora se verá perfecto */}
+        {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
           <span className="text-sm text-muted-foreground">Especialistas en Carga Aérea USA - Colombia</span>
@@ -87,7 +138,6 @@ export function Hero() {
                   placeholder="Ingresa tu número de rastreo..."
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
-                  // Detectar tecla Enter
                   onKeyDown={(e) => e.key === "Enter" && handleTracking()} 
                   className="w-full h-14 pl-12 pr-4 bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground text-lg rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500"
                 />
@@ -104,7 +154,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Botón de Cotización (WhatsApp) */}
           <div className="mt-6">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
               <Button
@@ -118,7 +167,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats */}
+        {/* STATS ANIMADOS (Aquí está la magia) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
           {[
             { value: "50K+", label: "Envíos Aéreos" },
@@ -126,8 +175,11 @@ export function Hero() {
             { value: "99.8%", label: "Entregas Exitosas" },
             { value: "24/7", label: "Soporte al Cliente" },
           ].map((stat, index) => (
-            <div key={index} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-              <div className="text-3xl md:text-4xl font-bold text-cyan-400 mb-1">{stat.value}</div>
+            <div key={index} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
+              <div className="text-3xl md:text-4xl font-bold text-cyan-400 mb-1 tabular-nums">
+                {/* Usamos nuestro nuevo componente animado */}
+                <AnimatedStat value={stat.value} />
+              </div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
             </div>
           ))}
