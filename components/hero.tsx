@@ -34,7 +34,8 @@ export function Hero() {
   const whatsappLink = "https://wa.me/573104183528?text=Hola%20AllPacco,%20quisiera%20cotizar%20un%20env%C3%ADo."
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    // CORRECCIÓN AQUÍ: Cambié 'pt-20' por 'pt-36' para que el menú no tape el título
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-36">
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -52,7 +53,7 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Badge */}
+        {/* Badge - Ahora se verá perfecto */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
           <span className="text-sm text-muted-foreground">Especialistas en Carga Aérea USA - Colombia</span>
@@ -86,7 +87,7 @@ export function Hero() {
                   placeholder="Ingresa tu número de rastreo..."
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
-                  // AÑADIDO: Detectar tecla Enter
+                  // Detectar tecla Enter
                   onKeyDown={(e) => e.key === "Enter" && handleTracking()} 
                   className="w-full h-14 pl-12 pr-4 bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground text-lg rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500"
                 />
@@ -103,7 +104,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Botón de Cotización (ACTUALIZADO con WhatsApp) */}
+          {/* Botón de Cotización (WhatsApp) */}
           <div className="mt-6">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
               <Button
