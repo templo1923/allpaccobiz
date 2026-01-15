@@ -69,7 +69,7 @@ export function Footer() {
               <img 
                 src="/logo-allpacco.png" 
                 alt="AllPacco Logística" 
-                className="h-10 w-auto object-contain" 
+                className="h-16 w-auto object-contain" 
               />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
