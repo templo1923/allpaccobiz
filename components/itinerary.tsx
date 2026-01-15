@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react"
+import { useState, useMemo, useEffect } from "react"
+import { Plane, Calendar, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const flightDates2026 = [
@@ -86,9 +86,20 @@ const months = [
 ]
 
 export function Itinerary() {
-  const [selectedMonth, setSelectedMonth] = useState(0) // January = 0
+  const [selectedMonth, setSelectedMonth] = useState(0)
+  const [today, setToday] = useState("")
 
-  // Filter flights by selected month
+  // Detectar fecha actual al montar el componente (para evitar errores de hidratación)
+  useEffect(() => {
+    const now = new Date()
+    // Formato YYYY-MM-DD para comparar fácil
+    const dateString = now.toISOString().split('T')[0]
+    setToday(dateString)
+    
+    // Seleccionar automáticamente el mes actual
+    setSelectedMonth(now.getMonth())
+  }, [])
+
   const filteredFlights = useMemo(() => {
     const monthStr = String(selectedMonth + 1).padStart(2, "0")
     return flightDates2026.filter((flight) => flight.date.includes(`-${monthStr}-`))
@@ -102,12 +113,25 @@ export function Itinerary() {
     setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))
   }
 
+  // Función para determinar el estado del vuelo
+  const getFlightStatus = (flightDate: string) => {
+    if (!today) return { status: "loading", label: "Cargando..." }
+    
+    if (flightDate < today) {
+      return { status: "past", label: "Realizado", color: "text-slate-500", bg: "bg-slate-500/10", dot: "bg-slate-500", icon: CheckCircle2 }
+    } else if (flightDate === today) {
+      return { status: "today", label: "Programado para Hoy", color: "text-yellow-400", bg: "bg-yellow-500/10", dot: "bg-yellow-400 animate-pulse", icon: Clock }
+    } else {
+      return { status: "future", label: "Programado", color: "text-green-400", bg: "bg-green-500/10", dot: "bg-green-400", icon: Plane }
+    }
+  }
+
   return (
     <section id="itinerario" className="py-24 md:py-32 bg-white/[0.02]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium mb-4 border border-cyan-500/20">
             <Calendar className="w-4 h-4 inline mr-2" />
             Vuelos Comerciales 2026
           </span>
@@ -121,6 +145,7 @@ export function Itinerary() {
           </p>
         </div>
 
+        {/* Month Navigation */}
         <div className="max-w-4xl mx-auto mb-10">
           <div className="flex items-center justify-center gap-4">
             <Button
@@ -148,8 +173,9 @@ export function Itinerary() {
           </div>
         </div>
 
+        {/* Months Tabs */}
         <div className="max-w-4xl mx-auto mb-10 overflow-x-auto pb-2">
-          <div className="flex gap-2 justify-center flex-wrap">
+          <div className="flex gap-2 justify-center flex-wrap min-w-max md:min-w-0 px-4 md:px-0">
             {months.map((month, index) => (
               <button
                 key={month}
@@ -183,29 +209,45 @@ export function Itinerary() {
 
           {/* Flights Grid */}
           <div className="grid sm:grid-cols-2 gap-4">
-            {filteredFlights.map((flight, index) => (
-              <div
-                key={index}
-                className="group p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
-                    <Plane className="w-6 h-6 text-cyan-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">{flight.day}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span>Vuelo comercial</span>
+            {filteredFlights.map((flight, index) => {
+              const status = getFlightStatus(flight.date)
+              const StatusIcon = status.icon
+
+              return (
+                <div
+                  key={index}
+                  className={`
+                    group p-5 rounded-2xl border transition-all duration-300
+                    ${status.status === "past" 
+                      ? "bg-white/[0.01] border-white/5 opacity-70 hover:opacity-100" // Estilo para vuelos pasados (apagado)
+                      : "bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-cyan-500/30 shadow-lg"} // Estilo para futuros
+                  `}
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Icono del Vuelo */}
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${status.status === 'past' ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500/10 text-cyan-400'}`}>
+                      <StatusIcon className="w-6 h-6" />
                     </div>
+                    
+                    <div className="flex-1">
+                      <p className={`font-semibold ${status.status === 'past' ? 'text-muted-foreground line-through decoration-slate-600' : 'text-foreground'}`}>
+                        {flight.day}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>Vuelo comercial</span>
+                      </div>
+                    </div>
+
+                    {/* Badge de Estado */}
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-transparent ${status.bg} ${status.color}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                      {status.label}
+                    </span>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    Programado
-                  </span>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Empty State */}
