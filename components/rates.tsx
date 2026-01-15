@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { 
   FileText, Search, MapPin, Globe, Download, CheckCircle2, 
-  Calculator, Scale, Plane, Package, Smartphone, Bike, Ship, Truck, Box, ArrowRight
+  Calculator, Scale, Plane, Package, Smartphone, Bike, Ship, Truck, ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,7 +48,7 @@ const coverageData = [
   }
 ]
 
-// 2. DATA DE CIUDADES NACIONALES (Para el nuevo diseño)
+// 2. DATA DE CIUDADES NACIONALES
 const colombiaCities = [
   "Bogotá D.C.", "Medellín", "Cali", "Barranquilla", 
   "Cartagena", "Bucaramanga", "Pereira", "Manizales", 
@@ -62,18 +62,18 @@ const shippingRates: Record<string, number> = {
   espana: 8
 }
 
-// 4. DATA DE SERVICIOS
+// 4. DATA DE SERVICIOS (Aquí están las 5 tarjetas restauradas)
 const servicesList = [
   {
     title: "Tarifa COURIER (0-8 lbs)",
-    icon: Package,
+    icon: Package, // Cajita 1
     desc: "Ideal para paquetes pequeños y compras personales.",
     color: "text-cyan-400",
     bg: "bg-cyan-500/10"
   },
   {
     title: "Tarifa COURIER Plena (+9 lbs)",
-    icon: Box, 
+    icon: Package, // Cajita 2 (Restaurada segura)
     desc: "La mejor opción para consolidar varias compras en un solo envío.",
     color: "text-blue-400",
     bg: "bg-blue-500/10"
@@ -117,15 +117,12 @@ export function Rates() {
   // CALCULADORA: Lógica mejorada anti-negativos
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    // Si está vacío, lo seteamos vacío
     if (value === "") {
       setWeight("")
       return
     }
-    // Convertimos a número
     const num = parseFloat(value)
-    // Si es negativo, lo ignoramos o lo ponemos en positivo (aquí lo ignoramos para que no escriban el menos)
-    if (num < 0) return 
+    if (num < 0) return // Ignora valores negativos
     
     setWeight(value)
   }
@@ -191,13 +188,12 @@ export function Rates() {
                         </div>
                         <div className="space-y-2">
                             <Label className="text-slate-300">Peso (Libras)</Label>
-                            {/* Input con validación de negativos */}
                             <Input 
                               type="number" 
                               min="0"
                               placeholder="Ej: 10" 
                               value={weight} 
-                              onChange={handleWeightChange} // Usamos la nueva función
+                              onChange={handleWeightChange} 
                               className="h-12 bg-black/20 border-white/10 text-lg" 
                             />
                         </div>
@@ -220,11 +216,9 @@ export function Rates() {
             </div>
         </div>
 
-        {/* 2. SERVICIOS (GRID CORREGIDO: Flex Centrado) */}
+        {/* 2. SERVICIOS (LAS 5 TARJETAS) */}
         <div className="mb-20 max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold text-center mb-10">Tipos de Tarifas y Carga</h3>
-            
-            {/* Flexbox para que la última tarjeta quede centrada si son impares */}
             <div className="flex flex-wrap justify-center gap-6">
                 {servicesList.map((item, idx) => {
                     const Icon = item.icon
@@ -241,11 +235,10 @@ export function Rates() {
             </div>
         </div>
 
-        {/* 3. COBERTURA NACIONAL (REDISEÑO SIN MAPA - ESTILO LISTA PRO) */}
+        {/* 3. COBERTURA NACIONAL (LISTA ELEGANTE) */}
         <div className="mb-20 max-w-5xl mx-auto">
             <div className="bg-gradient-to-r from-blue-950/50 to-slate-950/50 rounded-3xl border border-white/10 overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
-                
                 <div className="p-8 md:p-12 text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold mb-6 border border-yellow-500/20">
                         <Truck className="w-3 h-3" /> ENVIAMOS A TODA COLOMBIA
@@ -254,8 +247,6 @@ export function Rates() {
                     <p className="text-slate-300 max-w-2xl mx-auto mb-10">
                         Llevamos tus paquetes hasta la puerta de tu casa, sin importar en qué ciudad te encuentres. Nuestra red logística cubre el 100% del territorio nacional.
                     </p>
-
-                    {/* Grid de Ciudades (Visualmente atractivo) */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {colombiaCities.map((city, i) => (
                             <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/30 hover:bg-white/10 transition-colors">
@@ -266,7 +257,6 @@ export function Rates() {
                             </div>
                         ))}
                     </div>
-                    
                     <div className="mt-8 pt-8 border-t border-white/5">
                         <p className="text-sm text-slate-400 flex items-center justify-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-green-400" /> Y el resto de municipios del país a través de nuestras aliadas nacionales.
