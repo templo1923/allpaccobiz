@@ -11,12 +11,24 @@ export function Hero() {
   const [trackingNumber, setTrackingNumber] = useState("")
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
 
+  // Efecto para rotar palabras (sin cambios)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length)
     }, 2500)
     return () => clearInterval(interval)
   }, [])
+
+  // --- NUEVA FUNCIÓN DE RASTREO ---
+  const handleTracking = () => {
+    // Si el usuario escribió un número, lo mandamos directo a la búsqueda
+    if (trackingNumber.trim()) {
+      window.open(`https://www.aftership.com/track?t=${trackingNumber}`, '_blank')
+    } else {
+      // Si está vacío, solo abrimos la página de rastreo general
+      window.open('https://www.aftership.com/track', '_blank')
+    }
+  }
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -71,12 +83,16 @@ export function Hero() {
                   placeholder="Ingresa tu número de rastreo..."
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
+                  // AÑADIDO: Detectar tecla Enter
+                  onKeyDown={(e) => e.key === "Enter" && handleTracking()} 
                   className="w-full h-14 pl-12 pr-4 bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground text-lg rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500"
                 />
               </div>
               <Button
                 size="lg"
-                className="h-14 px-8 bg-cyan-500 hover:bg-cyan-400 text-background font-bold text-lg rounded-xl shadow-lg shadow-cyan-500/30 transition-all hover:shadow-cyan-500/50 hover:scale-105"
+                // AÑADIDO: Evento onClick
+                onClick={handleTracking} 
+                className="h-14 px-8 bg-cyan-500 hover:bg-cyan-400 text-background font-bold text-lg rounded-xl shadow-lg shadow-cyan-500/30 transition-all hover:shadow-cyan-500/50 hover:scale-105 cursor-pointer"
               >
                 <Plane className="w-5 h-5 mr-2" />
                 Rastrear
