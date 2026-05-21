@@ -21,7 +21,7 @@ export function Navbar() {
              <img 
                src="/logo-allpacco.png" 
                alt="AllPacco Logística" 
-               className="h-20 w-auto object-contain py-1" // Se cambió h-14 por h-20 para hacerlo más grande
+               className="h-24 w-auto object-contain py-1" // Se cambió h-14 por h-20 para hacerlo más grande
              />
           </a>
 
